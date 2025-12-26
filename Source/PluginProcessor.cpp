@@ -10,7 +10,7 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ), state(*this, nullptr, "parameters", createParameters())
 {
 }
 
@@ -88,7 +88,12 @@ void AudioPluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
-    sine.prepare(sampleRate, getTotalNumOutputChannels());
+    sines.resize(getTotalNumOutputChannels());
+
+    for (auto& sine : sines) {
+        sine.prepare(sampleRate, samplesPerBlock);
+    }
+
     juce::ignoreUnused (sampleRate, samplesPerBlock);
 }
 
@@ -153,7 +158,13 @@ void AudioPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
         // ..do something to the data...
     }
 
-    sine.process(buffer);
+    float numHarmonics = state.getRawParameterValue("numHarmonics")->load();
+
+    for (int channel = 0; channel < totalNumOutputChannels; channel++) {
+        auto* output = buffer.getWritePointer(channel);
+        sines[channel].setNumHarmonics(numHarmonics);
+        sines[channel].process(output, buffer.getNumSamples());
+    }
 }
 
 //==============================================================================
@@ -189,3 +200,9 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new AudioPluginAudioProcessor();
 }
+
+juce::AudioProcessorValueTreeState::ParameterLayout AudioPluginAudioProcessor::createParameters() {
+    return {
+        std::make_unique<juce::AudioParameterInt>(juce::ParameterID {"numHarmonics"}, "Harmonics", 1, 200, 6)
+    };
+};

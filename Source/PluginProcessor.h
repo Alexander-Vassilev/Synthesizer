@@ -43,8 +43,11 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+    juce::AudioProcessorValueTreeState& getState() { return state; }
 private:
-    SineWave sine;
+    std::vector<SineWave> sines;
+    juce::AudioProcessorValueTreeState state;
+    juce::AudioProcessorValueTreeState::ParameterLayout createParameters();
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessor)

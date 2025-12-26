@@ -17,9 +17,15 @@ public:
 private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
+    AudioPluginAudioProcessor& processorRef;
     Square square;
 
-    AudioPluginAudioProcessor& processorRef;
+    juce::TextButton playButton;
+    juce::Slider numHarmonicsSlider;
+    juce::Slider frequencySlider;
+    juce::Label harmonicsLabel {"harmonicsLabel", "Harmonics Label"};
+    juce::Label freqeuncyLabel {"frequencyLabel", "Frequency Label"};
+    juce::AudioProcessorValueTreeState::SliderAttachment numHarmonicsSliderAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessorEditor)
 };
