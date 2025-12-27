@@ -10,19 +10,18 @@ public:
 	void prepare(double sampleRate, int numChannels);
 	void process(float* output, int numSamples);
 	float getAmplitude() const { return amplitude; }
-	float getFrequency() const { return frequency; }
+	float getFrequency() { return smoothedFreq.getNextValue(); }
 	void setAmplitude(const float newAmplitude) { amplitude = newAmplitude; }
-	void setFrequency(const float newFrequency) { frequency = newFrequency; }
+	void setFrequency(const float newFrequency) { smoothedFreq.setTargetValue(newFrequency); }
 	void setNumHarmonics(const float newNumHarmonics) { numHarmonics = newNumHarmonics; }
 
 private:
 	float amplitude = 0.05f;
-	float frequency = 50.0f;
-	float phase = 0.0f;
 	float numHarmonics = 6;
 	float currentSampleRate = 0.0f;
-	float timeIncrement = 0.0f;
-	float currentTime;
+	float phase = 0.0f;
+	float phaseIncrement = 0.0f;
+	juce::SmoothedValue<float, juce::ValueSmoothingTypes::Multiplicative> smoothedFreq;
 };
 
 #endif SINE_H

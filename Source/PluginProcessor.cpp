@@ -95,6 +95,10 @@ void AudioPluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
     }
 
     juce::ignoreUnused (sampleRate, samplesPerBlock);
+
+    numHarmonicsParam = state.getRawParameterValue("numHarmonics");
+    frequencyParam = state.getRawParameterValue("frequency");
+    playParam = (state.getRawParameterValue("isOn"));
 }
 
 void AudioPluginAudioProcessor::releaseResources()
@@ -158,9 +162,9 @@ void AudioPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
         // ..do something to the data...
     }
 
-    float numHarmonics = state.getRawParameterValue("numHarmonics")->load();
-    float frequency = state.getRawParameterValue("frequency")->load();
-    bool isOn = state.getRawParameterValue("isOn")->load();
+    const float frequency = frequencyParam->load();
+    const float numHarmonics = numHarmonicsParam->load();
+    const bool isOn = static_cast<bool>(playParam->load());
 
     if (isOn) {
         for (int channel = 0; channel < totalNumOutputChannels; channel++) {
