@@ -159,11 +159,16 @@ void AudioPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     }
 
     float numHarmonics = state.getRawParameterValue("numHarmonics")->load();
+    float frequency = state.getRawParameterValue("frequency")->load();
+    bool isOn = state.getRawParameterValue("isOn")->load();
 
-    for (int channel = 0; channel < totalNumOutputChannels; channel++) {
-        auto* output = buffer.getWritePointer(channel);
-        sines[channel].setNumHarmonics(numHarmonics);
-        sines[channel].process(output, buffer.getNumSamples());
+    if (isOn) {
+        for (int channel = 0; channel < totalNumOutputChannels; channel++) {
+            auto* output = buffer.getWritePointer(channel);
+            sines[channel].setNumHarmonics(numHarmonics);
+            sines[channel].setFrequency(frequency);
+            sines[channel].process(output, buffer.getNumSamples());
+        }
     }
 }
 
@@ -203,6 +208,8 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 
 juce::AudioProcessorValueTreeState::ParameterLayout AudioPluginAudioProcessor::createParameters() {
     return {
-        std::make_unique<juce::AudioParameterInt>(juce::ParameterID {"numHarmonics"}, "Harmonics", 1, 200, 6)
+        std::make_unique<juce::AudioParameterInt>(juce::ParameterID {"numHarmonics"}, "Harmonics", 1, 200, 6),
+        std::make_unique<juce::AudioParameterFloat>(juce::ParameterID {"frequency"}, "Frequency", 20.0f, 20000.0f, 55.0f),
+        std::make_unique<juce::AudioParameterBool>(juce::ParameterID {"isOn"}, "On", true)
     };
 };

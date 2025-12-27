@@ -24,8 +24,10 @@ private:
     juce::Slider numHarmonicsSlider;
     juce::Slider frequencySlider;
     juce::Label harmonicsLabel {"harmonicsLabel", "Harmonics Label"};
-    juce::Label freqeuncyLabel {"frequencyLabel", "Frequency Label"};
+    juce::Label frequencyLabel {"frequencyLabel", "Frequency Label"};
     juce::AudioProcessorValueTreeState::SliderAttachment numHarmonicsSliderAttachment;
+    juce::AudioProcessorValueTreeState::SliderAttachment frequencySliderAttachment;
+    juce::AudioProcessorValueTreeState::ButtonAttachment playButtonAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessorEditor)
 };
